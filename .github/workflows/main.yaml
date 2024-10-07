@@ -32,12 +32,10 @@ jobs:
       - name: Install Aliyun OSS CLI
         run: |
           npm install -g aliyun-cli
-
       # Configure OSS credentials
       - name: Configure OSS credentials
         run: |
           aliyun configure set --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} --endpoint oss-cn-beijing.aliyuncs.com --bucket aibazi
-
       # Upload to OSS
       - name: Upload to Aliyun OSS
         run: |
