@@ -15,17 +15,16 @@
         >的年份换运
       </span>
     </div>
-    <template v-for="(viewItem, index) of viewModel">
+    <template v-for="(viewItem, index) of viewModel" :key="index">
       <div
         class="flex flex-col flex-1 gap-2 h-56 max-h-56 w-full"
         v-if="viewItem.isShowup()"
-        :set="(viewItemStatus = { isEmpty: !viewItem.value || viewItem.value.length <= 0 })"
       >
-        <div v-if="!viewItemStatus.isEmpty" class="text-md text-base-content ml-4">
+        <div v-if="!viewItem.isEmpty" class="text-md text-base-content ml-4">
           {{ viewItem.label }}
         </div>
         <div
-          v-if="viewItemStatus.isEmpty"
+          v-if="viewItem.isEmpty"
           class="flex flex-1 justify-center mt-10 text-base-content/60"
         >
           {{ viewItem.placeholder }}
@@ -35,22 +34,19 @@
           v-else
           class="flex flex-1 flex-row w-full overflow-x-auto gap-1 bg-base-100 p-2 justify-start  h-auto"
         >
-          <!-- <div
-            class="flex flex-row  pr-1 "
           
-         
-          > -->
+         <!-- No TS2339 error here -->
             <div
               v-for="(fortuneItem, index) in viewItem.value" 
-              :set="(fortuneItemStatus = { isSelected: selectedMap[String(viewItem.selectMapKey)] === Number(index), isLuckDay: viewItem.selectMapKey === 'luckDay'})"
+              :key="index"
               class="flex flex-col justify-stretch items-center cursor-pointer mr-1 *:cursor-pointer min-w-10 overflow-hidden *:overflow-hidde shrink flex-1"
                 @click="viewItem.onChange(fortuneItem, Number(index))"
               :class="{
-                selected: fortuneItemStatus.isSelected,
+                selected: fortuneItem.isSelected,
                 'border-r-0': index + 1 === viewItem.value.length
               }"
             >
-                <div class="flex flex-col text-base-content/60"  :class="fortuneItemStatus.isSelected ? 'text-primary font-bold':''"
+                <div class="flex flex-col text-base-content/60"  :class="fortuneItem.isSelected ? 'text-primary font-bold':''"
                 >
                   <label v-show="fortuneItem.year" class="italic text-sm"  
                   >{{ fortuneItem.year }}</label>
@@ -63,13 +59,13 @@
                     >{{ fortuneItem.age }}岁</label
                   >
                 </div>
-              <div class="max-w-12 w-full rounded-full  h-1 my-1" :class="fortuneItemStatus.isSelected ?'w-full bg-primary':''"></div>
+              <div class="max-w-12 w-full rounded-full  h-1 my-1" :class="fortuneItem.isSelected ?'w-full bg-primary':''"></div>
               <div class="flex flex-row gap-1 items-start h-14">
                 <span :class="fortuneItem.stemColor" class="join-item text-xl font-bold">
                   {{ fortuneItem.stemName }}
                 </span>
                 <div class="flex flex-col">
-                  <label  class="block whitespace-nowrap text-xs text-base-content/80" v-for="tenStar of fortuneItem.tenStarsOfBranch">
+                  <label  class="block whitespace-nowrap text-xs text-base-content/80" v-for="(tenStar,index) of fortuneItem.tenStarsOfBranch" :key="index">
                     {{ tenStar[0] }}
                   </label>
                 </div>
@@ -80,8 +76,9 @@
                 </span>
                 <div class="flex flex-col">
                   <label
-                    v-for="tenStar of fortuneItem.tenStarsOfBranch"
+                    v-for="(tenStar,index) of fortuneItem.tenStarsOfBranch"
                     class="block whitespace-nowrap text-xs text-base-content/80"
+                    :key="index"
                   >
                     {{ tenStar[0] }}
                   </label>
@@ -89,7 +86,6 @@
               </div>
             </div>
           </div>
-        <!-- </div> -->
       </div>
     </template>
   </div>
@@ -97,7 +93,7 @@
 <script setup lang="ts">
 import { computed, reactive, watch, type Reactive } from 'vue'
 import { useAppData } from './composable'
-import { set } from 'lodash'
+import { map, set } from 'lodash'
 
 const {
   selectedYear,
@@ -120,12 +116,19 @@ const selectedMap: Reactive<{ [index: string]: number }> = reactive({
 })
 
 const viewModel = computed(() => {
+  
   const result = []
   result.push({
     selectMapKey: 'fortune',
     isShowup: () => true,
+
     label: '大运',
-    value: fortunes.value,
+    value: map(fortunes.value, (item:any, index:number) => ({
+      ...item,
+      isSelected: selectedMap['fortune'] === Number(index),
+      isLuckday: false,
+    })),
+    isEmpty: !fortunes.value || fortunes.value.length <= 0,
     onChange: (fortune: any, index: number) => {
       setFortune(fortune.year)
       selectedMap.fortune = index
@@ -137,7 +140,11 @@ const viewModel = computed(() => {
     placeholder: '请选择大运查看',
     isShowup: () => true,
     label: '流年',
-    value: luckYears.value,
+    value: map(luckYears.value, (item:any, index:number) => ({
+      ...item,
+      isSelected: selectedMap['fortune'] === Number(index),
+      isLuckday: false,
+    })),
     onChange: (fortune: any, index: number) => {
       currentLuckYear.value = fortune.year
       selectedMap.luckYear = index
@@ -149,7 +156,11 @@ const viewModel = computed(() => {
     placeholder: '请选择流年查看',
     isShowup: () => selectedMap.fortune !== -1,
     label: '流月',
-    value: luckMonths.value,
+    value: map(luckMonths.value, (item: any, index: number) => ({
+      ...item,
+      isSelected: selectedMap['fortune'] === Number(index),
+      isLuckday: false,
+    })),
     onChange: (fortune: any, index: number) => {
       currentLuckMonth.value = fortune.month
       selectedMap.luckMonth = index
@@ -161,7 +172,11 @@ const viewModel = computed(() => {
     placeholder: '请选择流月查看',
     isShowup: () => selectedMap.luckYear !== -1,
     label: '流日',
-    value: luckDays.value,
+    value: map(luckDays.value, (item:any, index:number) => ({
+      ...item,
+      isSelected: selectedMap['fortune'] === Number(index),
+      isLuckday: true,
+    })),
     onChange: (fortune: any, index: number) => {
       currentLuckDay.value = fortune.day
       selectedMap.luckDay = index

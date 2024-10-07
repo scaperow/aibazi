@@ -11,7 +11,9 @@ import {
   SolarTime,
   Sound
 } from 'tyme4ts'
+//@ts-ignore
 import { Builder } from 'shiren-columns'
+//@ts-ignore
 import { plate } from 'shiren-calendar'
 import { computed, ref, type Ref } from 'vue'
 // 引入lunisolar
@@ -229,7 +231,7 @@ export const useAppData = () => {
     info.lucky.z = Builder.z(dg, info.lucky.z)
 
     return map(
-      filter(datetime, (_, i) => i < 10),
+      filter(datetime, (_, i:number) => i < 10),
       (luckyTime: any, index: number) => {
         const lunar = lunisolar(luckyTime)
 
@@ -238,8 +240,8 @@ export const useAppData = () => {
           year: lunar.year,
           stemName: info.lucky.g[index].name,
           branchName: info.lucky.z[index].name,
-          branchColor: FG_ELEMENT_COLORS[first(info.lucky.z[index].element).name],
-          stemColor: FG_ELEMENT_COLORS[first(info.lucky.g[index].element).name],
+          branchColor: FG_ELEMENT_COLORS[(first(info.lucky.z[index].element) as any).name],
+          stemColor: FG_ELEMENT_COLORS[(first(info.lucky.g[index].element) as any).name],
           tenStarsOfBranch: map(info.lucky.z[index].spirit, (spirit) => TENSTARS[spirit.name]),
           tenStarsOfStem: map(info.lucky.g[index].spirit, (spirit) => TENSTARS[spirit.name])
         }
@@ -290,8 +292,8 @@ export const useAppData = () => {
           age: currentFortune.value + index - lsr.year,
           branchName: branch.name,
           stemName: stem.name,
-          branchColor: get(FG_ELEMENT_COLORS, first(branch.element).name),
-          stemColor: get(FG_ELEMENT_COLORS, first(stem.element).name),
+          branchColor: get(FG_ELEMENT_COLORS, (first(branch.element) as any).name),
+          stemColor: get(FG_ELEMENT_COLORS, (first(stem.element) as any).name),
           tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
           tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
         }
@@ -316,8 +318,8 @@ export const useAppData = () => {
           month: index + 1,
           branchName: branch.name,
           stemName: stem.name,
-          branchColor: get(FG_ELEMENT_COLORS, first(branch.element).name),
-          stemColor: get(FG_ELEMENT_COLORS, first(stem.element).name),
+          branchColor: get(FG_ELEMENT_COLORS, first<any>(branch.element).name),
+          stemColor: get(FG_ELEMENT_COLORS, first<any>(stem.element).name),
           tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
           tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
         }
@@ -344,8 +346,8 @@ export const useAppData = () => {
           day: index + 1,
           branchName: branch.name,
           stemName: stem.name,
-          branchColor: get(FG_ELEMENT_COLORS, first(branch.element).name),
-          stemColor: get(FG_ELEMENT_COLORS, first(stem.element).name),
+          branchColor: get(FG_ELEMENT_COLORS, (first(branch.element) as any).name),
+          stemColor: get(FG_ELEMENT_COLORS, (first(stem.element) as any).name),
           tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
           tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
         }
