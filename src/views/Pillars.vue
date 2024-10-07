@@ -9,35 +9,36 @@
         <th>时柱</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
+    <tbody v-if="eightChar">
+      <tr v-if="eightChar.tenStar">
         <td>十神</td>
-        <td v-for="(cellValue, cellIndex) in eightChar.tenStar" :class="{ 'text-primary': cellIndex === 2 }">
+        <td v-for="(cellValue, cellIndex) in eightChar.tenStar" :key="cellIndex"
+          :class="{ 'text-primary': cellIndex === 2 }">
           <div class="">{{ cellValue }}</div>
         </td>
       </tr>
 
-      <tr>
+      <tr v-if="eightChar.heavenStem">
         <td>天干</td>
-        <td v-for="(cellValue, cellIndex) in eightChar.heavenStem">
+        <td v-for="(cellValue, cellIndex) in eightChar.heavenStem" :key="cellIndex">
           <label class="px-4 py-1 rounded font-bold text-white text-lg" :class="cellValue.color">{{
             cellValue.name }}</label>
         </td>
       </tr>
 
-      <tr>
+      <tr v-if="eightChar.earthBranch">
         <td>地支</td>
-        <td v-for="(cellValue, cellIndex) in eightChar.earthBranch">
+        <td v-for="(cellValue, cellIndex) in eightChar.earthBranch" :key="cellIndex">
           <label class="px-4 py-1 rounded font-bold text-white text-lg" :class="cellValue.color">{{
             cellValue.name }}</label>
         </td>
       </tr>
 
-      <tr>
+      <tr v-if="eightChar.hideHeavenStems">
         <td>藏干</td>
-        <td v-for="(cellValue, cellIndex) in eightChar.hideHeavenStems">
+        <td v-for="(cellValue, cellIndex) in eightChar.hideHeavenStems" :key="cellIndex">
           <div class="flex gap-1 flex-wrap flex-col justify-start items-center">
-            <div v-for="itemValue in cellValue"
+            <div v-for="(itemValue, cellIndex) in cellValue" :key="cellIndex"
               class="flex flex-row items-center justify-center rounded-md border-solid border-base-200 border pr-1">
               <div class="text-base-content bg-base-200 text-md self-stretch px-1 flex items-center">
                 {{ itemValue.name }}

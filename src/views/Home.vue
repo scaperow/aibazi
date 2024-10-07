@@ -19,7 +19,7 @@
       <div class="item">
         <div class="label">出生时间</div>
         <div @click="openPicker" class="content" :class="[selectedDataString ? 'neutral-content' : '	base-content']">
-          <div class="badge bg-secondary flex-shrink-0" v-show="selectedDataString">
+          <div class="badge  bg-secondary flex-shrink-0" v-show="selectedDataString">
             {{ calendarMode === 'lunar' ? '农历' : '公历' }}
           </div>
           <div class="self-shrink flex-grow-1">{{ selectedDataString || '请点击选择' }}</div>
@@ -35,14 +35,14 @@
       </div>
     <button class="btn btn-primary w-full mx-4 max-w-64 self-center mt-2" @click="
 
-      push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}`)">测算</button>
+      push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}/${calendarMode}`)">测算</button>
     </div>
 
 
     <ion-modal ref="modalRef" mode="ios">
       <div class="flex flex-col">
         <div class="flex justify-between py-2 px-4">
-          <div role="tablist" class="tabs tabs-boxed  tabs-lg">
+          <div role="tablist" class="tabs tabs-boxed  tabs-md">
             <a role="tab" class="tab" :class="{ 'tab-active': calendarMode === 'solar' }"
               @click="updateCalendarMode('solar')">公历</a>
             <a role="tab" class="tab" :class="{ 'tab-active': calendarMode === 'lunar' }"
@@ -85,6 +85,7 @@ import {
 import { useAppData } from './composable'
 import { useRouter } from 'vue-router'
 import { useDark } from '@vueuse/core'
+import lunisolar from 'lunisolar'
 
 const isDark = useDark() // Ref<'dark' | 'light'>
 const modalRef = ref(null)
@@ -96,7 +97,7 @@ const calculateDaysInMonth = (year: number, month: number) => {
 }
 
 const selectedDataString = computed(() =>
-  lunarDay.value.format(calendarMode.value === 'lunar' ? 'lY年 lMlD lH時' : 'YYYY/MM/DD HH点')
+  lsrObject.value ? lsrObject.value.format(calendarMode.value === 'lunar' ? 'lY年 lMlD lH時' : 'YYYY/MM/DD HH点') : ''
 )
 
 const selectedGenderString = computed(() =>
@@ -104,7 +105,7 @@ const selectedGenderString = computed(() =>
 )
 
 const confirm = () => {
-  updateBirthday(selectedYear.value, selectedMonth.value, selectedDay.value, selectedHour.value)
+  updateBirthday(selectedYear.value as number, selectedMonth.value as number, selectedDay.value as number, selectedHour.value as number)
     ; (modalRef.value! as typeof IonModal).$el.dismiss()
 }
 
@@ -120,13 +121,13 @@ const {
   updateCalendarMode,
   calendarMode,
   selectedGender,
-  lunarDay
+  lsrObject
 } = useAppData()
 // // 选中的年、月、日
-const selectedYear = ref<number>(1989)
-const selectedMonth = ref<number>(3)
-const selectedDay = ref<number>(18)
-const selectedHour = ref<number>(2)
+const selectedYear = ref<number>()
+const selectedMonth = ref<number>()
+const selectedDay = ref<number>()
+const selectedHour = ref<number>()
 const actionSheetButtons = ref([
   {
     text: '男',
@@ -157,6 +158,8 @@ const onColumnChanged = (column: number, { value }: any) => {
 
 // 根据当前年份和月份生成天数选项
 const generateDayOptions = (year: number, month: number) => {
+  // const year = lsrObject.value?.year || new Date().getFullYear();
+  // const month = lsrObject.value?.year || new Date().getMonth();
   if (calendarMode.value === 'solar') {
     // 公历生成天数
     const daysInMonth = calculateDaysInMonth(year, month)
@@ -166,7 +169,8 @@ const generateDayOptions = (year: number, month: number) => {
     }))
   } else {
     // 农历生成天数
-    const daysInMonth = calculateDaysInMonth(lunarDay.value.year, lunarDay.value.month)
+    
+    const daysInMonth = calculateDaysInMonth(year, lunisolar(`${year}-${month}-1`).lunar.month)
     return Array.from({ length: daysInMonth }, (_, i) => ({
       text: `农历${i + 1}日`,
       value: i + 1
@@ -192,7 +196,7 @@ const columns = ref([
   },
   {
     name: 'day',
-    options: generateDayOptions(selectedYear.value, selectedMonth.value)
+    options: generateDayOptions(selectedYear.value as number, selectedMonth.value as number)
   },
   {
     name: 'time',
@@ -227,7 +231,7 @@ const columns = ref([
 
 // 监听年份和月份的变化，更新天数
 watch([selectedYear, selectedMonth, calendarMode], ([newYear, newMonth]) => {
-  columns.value[2].options = generateDayOptions(newYear, newMonth) // 更新天数选项
+  columns.value[2].options = generateDayOptions(newYear as number, newMonth as number) // 更新天数选项
 })
 
 // 打开 picker

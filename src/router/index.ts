@@ -6,7 +6,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/show/:year/:month/:day/:hour/:gender',
+      path: '/show/:year/:month/:day/:hour/:gender/:mode',
       name: 'analyze',
       component: Analyze
     },

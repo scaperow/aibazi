@@ -1,5 +1,4 @@
 import { compact, filter, first, get, map } from 'lodash'
-// import type { Lunar } from 'lunar-typescript'
 import {
   ChildLimit,
   Gender,
@@ -41,10 +40,6 @@ lunisolar
   .locale(theGodsZh)
   .locale(char8exZh)
   .locale(takeSoundZh)
-
-// lunisolar.config({
-//   lang: 'zh-cn' // 设换默认语言为繁体中文
-// })
 
 const BG_ELEMENT_COLORS: any = {
   金: 'bg-matel/80',
@@ -106,13 +101,23 @@ const getHeavenSteamNames = (sixtyCycle: SixtyCycle, daySixtyCycle: SixtyCycle) 
 const currentLuckMonth = ref(0)
 const currentLuckDay = ref(0)
 const calendarMode = ref<'solar' | 'lunar'>('solar')
-const selectedYear = ref<number>(1989)
-const selectedMonth = ref<number>(3)
-const selectedDay = ref<number>(18)
-const selectedHour = ref<number>(2)
-const selectedGender: Ref<Gender | null> = ref(Gender.MAN)
-const lsrObject = computed(() =>
-  calendarMode.value === 'lunar'
+const selectedYear = ref<number>()
+const selectedMonth = ref<number>()
+const selectedDay = ref<number>()
+const selectedHour = ref<number>()
+const selectedGender: Ref<Gender | null> = ref(null)
+const lsrObject = computed(() => {
+  if (
+    !calendarMode.value ||
+    !selectedYear.value ||
+    !selectedMonth.value ||
+    !selectedDay.value ||
+    !selectedHour.value
+  ) {
+    return null
+  }
+
+  return calendarMode.value === 'lunar'
     ? lunisolar.fromLunar({
         year: selectedYear.value,
         month: selectedMonth.value,
@@ -124,17 +129,7 @@ const lsrObject = computed(() =>
     : lunisolar(
         `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value} ${selectedHour.value}:00:00`
       )
-)
-const lunarHourObject = computed(() =>
-  LunarHour.fromYmdHms(
-    lsrObject.value.year,
-    lsrObject.value.month,
-    lsrObject.value.day,
-    lsrObject.value.hour,
-    0,
-    0
-  )
-)
+})
 
 export const useAppData = () => {
   const currentLuckYear: Ref<any> = ref(null)
@@ -150,18 +145,30 @@ export const useAppData = () => {
     selectedGender.value = gender
   }
 
-  const updateCalendarMode = (value: 'solar' | 'lunar') => {
-    calendarMode.value = value
+  const updateCalendarMode = (value: string) => {
+    calendarMode.value = value as 'solar' | 'lunar'
   }
 
   const eightChar = computed(() => {
+    if (!lsrObject.value) {
+      return null
+    }
+
+    const lunarHourObject = LunarHour.fromYmdHms(
+      lsrObject.value.year,
+      lsrObject.value.month,
+      lsrObject.value.day,
+      lsrObject.value.hour,
+      0,
+      0
+    )
     const lsr = lsrObject.value
-    const daySixtyCycle = lunarHourObject.value.getDaySixtyCycle()
+    const daySixtyCycle = lunarHourObject.getDaySixtyCycle()
     const sixtyCycles = [
-      lunarHourObject.value.getYearSixtyCycle(),
-      lunarHourObject.value.getMonthSixtyCycle(),
+      lunarHourObject.getYearSixtyCycle(),
+      lunarHourObject.getMonthSixtyCycle(),
       daySixtyCycle,
-      lunarHourObject.value.getSixtyCycle()
+      lunarHourObject.getSixtyCycle()
     ]
     const c8 = lsr.char8ex(1)
     return {
@@ -212,15 +219,18 @@ export const useAppData = () => {
   const stemNames = lunisolar.Stem.getNames()
   const stemNamesFortune = ['', ...stemNames]
   const fortunes = computed(() => {
+    if (!lsrObject.value) {
+      return []
+    }
+
     const lsr = lsrObject.value
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
 
     const {
       basic,
-      lucky: { datetime, desc, g, z }
+      lucky: { datetime }
     } = info
 
-    console.log(info)
     const dg = basic.g[2]
     // 把四柱天干｜地支索引转换为对应的天干颜色
     info.basic.g = Builder.g(dg, info.basic.g)
@@ -231,7 +241,7 @@ export const useAppData = () => {
     info.lucky.z = Builder.z(dg, info.lucky.z)
 
     return map(
-      filter(datetime, (_, i:number) => i < 10),
+      filter(datetime, (_, i: number) => i < 10),
       (luckyTime: any, index: number) => {
         const lunar = lunisolar(luckyTime)
 
@@ -250,6 +260,10 @@ export const useAppData = () => {
   })
 
   const lucky = computed(() => {
+    if (!lsrObject.value) {
+      return null
+    }
+
     const lsr = lsrObject.value
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
 
@@ -275,84 +289,87 @@ export const useAppData = () => {
   }
 
   const luckYears = computed(() => {
-    if (currentFortune.value) {
-      const lsr = lsrObject.value
-      const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
-      const {
-        basic,
-        lucky: { datetime, desc, g, z }
-      } = info
-      const dg = basic.g[2]
-      return Builder.year(currentFortune.value).map((item: any, index: number) => {
-        const luckYear = Builder.gz(dg, item)
-        const { g: stem, z: branch } = luckYear
-
-        return {
-          year: currentFortune.value + index,
-          age: currentFortune.value + index - lsr.year,
-          branchName: branch.name,
-          stemName: stem.name,
-          branchColor: get(FG_ELEMENT_COLORS, (first(branch.element) as any).name),
-          stemColor: get(FG_ELEMENT_COLORS, (first(stem.element) as any).name),
-          tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
-          tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
-        }
-      })
+    if (!lsrObject.value || !currentFortune.value) {
+      return null
     }
+
+    const lsr = lsrObject.value
+    const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
+    const { basic, lucky } = info
+    const dg = basic.g[2]
+    return Builder.year(currentFortune.value).map((item: any, index: number) => {
+      const luckYear = Builder.gz(dg, item)
+      const { g: stem, z: branch } = luckYear
+
+      return {
+        year: currentFortune.value + index,
+        age: currentFortune.value + index - lsr.year,
+        branchName: branch.name,
+        stemName: stem.name,
+        branchColor: get(FG_ELEMENT_COLORS, (first(branch.element) as any).name),
+        stemColor: get(FG_ELEMENT_COLORS, (first(stem.element) as any).name),
+        tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
+        tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
+      }
+    })
   })
 
   const luckMonths = computed(() => {
-    if (currentLuckYear.value) {
-      const lsr = lsrObject.value
-      const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
-      const {
-        basic,
-        lucky: { datetime, desc, g, z }
-      } = info
-      const dg = basic.g[2]
-      return Builder.month(currentLuckYear.value).map((item: any, index: number) => {
-        const { g: stem, z: branch } = Builder.gz(dg, item)
-
-        return {
-          ...item,
-          month: index + 1,
-          branchName: branch.name,
-          stemName: stem.name,
-          branchColor: get(FG_ELEMENT_COLORS, first<any>(branch.element).name),
-          stemColor: get(FG_ELEMENT_COLORS, first<any>(stem.element).name),
-          tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
-          tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
-        }
-      })
+    if (!lsrObject.value || !currentLuckYear.value) {
+      return null
     }
+
+    const lsr = lsrObject.value
+    const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
+    const {
+      basic,
+      lucky: { datetime, desc, g, z }
+    } = info
+    const dg = basic.g[2]
+    return Builder.month(currentLuckYear.value).map((item: any, index: number) => {
+      const { g: stem, z: branch } = Builder.gz(dg, item)
+
+      return {
+        ...item,
+        month: index + 1,
+        branchName: branch.name,
+        stemName: stem.name,
+        branchColor: get(FG_ELEMENT_COLORS, first<any>(branch.element).name),
+        stemColor: get(FG_ELEMENT_COLORS, first<any>(stem.element).name),
+        tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
+        tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
+      }
+    })
   })
 
   const luckDays = computed(() => {
-    if (currentLuckMonth.value) {
-      const lsr = lsrObject.value
-      const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
-      const {
-        basic,
-        lucky: { datetime, desc, g, z }
-      } = info
-      const dg = basic.g[2]
-      const luckMonth = luckMonths.value.find(
-        (luckMonth: any) => luckMonth.month === currentLuckMonth.value
-      )
-      return Builder.day(luckMonth).map((item: any, index: number) => {
-        const { g: stem, z: branch } = Builder.gz(dg, item)
-
-        return {
-          day: index + 1,
-          branchName: branch.name,
-          stemName: stem.name,
-          branchColor: get(FG_ELEMENT_COLORS, (first(branch.element) as any).name),
-          stemColor: get(FG_ELEMENT_COLORS, (first(stem.element) as any).name),
-          tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
-          tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
-        }
-      })
+    if (!lsrObject.value || !currentLuckMonth.value) {
+      return null
     }
+
+    const lsr = lsrObject.value
+    const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
+    const {
+      basic,
+      lucky: { datetime, desc, g, z }
+    } = info
+    const dg = basic.g[2]
+    const luckMonth = luckMonths.value.find(
+      (luckMonth: any) => luckMonth.month === currentLuckMonth.value
+    )
+    return Builder.day(luckMonth).map((item: any, index: number) => {
+      const { g: stem, z: branch } = Builder.gz(dg, item)
+
+      return {
+        day: index + 1,
+        branchName: branch.name,
+        stemName: stem.name,
+        branchColor: get(FG_ELEMENT_COLORS, (first(branch.element) as any).name),
+        stemColor: get(FG_ELEMENT_COLORS, (first(stem.element) as any).name),
+        tenStarsOfBranch: map(branch.spirit, (spirit) => TENSTARS[spirit.name]),
+        tenStarsOfStem: map(stem.spirit, (spirit) => TENSTARS[spirit.name])
+      }
+    })
   })
 
   return {
@@ -366,8 +383,7 @@ export const useAppData = () => {
     currentFortune,
     currentLuckYear,
     currentLuckDay,
-    lunarDay: lsrObject,
-    // flowingYears,
+    lsrObject,
     lucky,
     fortunes,
     selectedYear,

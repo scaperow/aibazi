@@ -1,5 +1,8 @@
 <template>
-  <div class="flex-1 flex flex-col gap-4 justify-start w-full h-full ">
+  <div class="flex-1  flex-col gap-4  w-full h-full  flex justify-center items-center">
+      <div class="text-2xl text-base-content bg-neutral p-2 rounded-md">📢 重磅功能，后续更新</div>
+      <button class="btn btn-primary" @click="subscribed = true">点击订阅</button>
+      <label class="text text-sm text-base-content/60" v-show="subscribed">您已成功订阅，该功能上线后会通知您</label>
     <!-- <v-chart class="chart" :option="option" /> -->
     <!-- <div class="flex flex-col mt-16 justify-center px-16 gap-4" v-show="step == 1">
       <div v-for="(item, index) in collapseItems" :key="index" tabindex="0"
@@ -20,6 +23,8 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from "vue";
+const subscribed = ref(false)
 // import { computed, ref, watch, type Ref } from 'vue'
 // import { use,  } from "echarts/core";
 // import { CanvasRenderer } from "echarts/renderers";
@@ -178,7 +183,7 @@
 // });
 </script>
 
-<style scss scoped>
+<style  scoped>
 .container {
   @apply flex flex-col justify-center gap-4 h-full max-w-3xl bg-white rounded-3xl p-8 flex-1 left-auto right-auto px-10;
 }
