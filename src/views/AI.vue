@@ -1,75 +1,181 @@
 <template>
   <div class="flex-1 flex flex-col gap-4 justify-start w-full h-full ">
-    <div class="flex flex-col mt-16 justify-center px-16 gap-4" v-show="step == 1">
+    <!-- <v-chart class="chart" :option="option" /> -->
+    <!-- <div class="flex flex-col mt-16 justify-center px-16 gap-4" v-show="step == 1">
       <div v-for="(item, index) in collapseItems" :key="index" tabindex="0"
         class="collapse collapse-arrow border-base-300 bg-base-200 border">
         <input type="radio" :name="`my-accordion-${item.id}`" :checked="checkedId.includes(item.id)" />
         <div class="collapse-title text-md font-medium items-center flex gap-2">
           <IonIcon :size="'large'" :icon="item.icon"></IonIcon>
           {{ item.title }}
-          <!-- 可选是否显示箭头图标 -->
           <IonIcon v-if="item.showArrow" :icon="arrowForward"></IonIcon>
         </div>
         <div class="collapse-content flex flex-row flex-wrap gap-6">
           <button v-for="subItem in item.items"
             class="btn btn-sm btn-outline btn-primary border border-solid border-primary">{{
               subItem.label }}</button>
-          <!-- <button class="btn btn-outline btn-primary">Primary</button> -->
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, ref, watch, type Ref } from 'vue'
-import Pillars from './Pillars.vue'
-import Fortune from './Fortune.vue'
-import {
-  IonModal,
-  IonButtons,
-  IonButton,
-  IonPicker,
-  IonIcon,
-  IonText,
-  IonPickerColumn,
-  IonPickerColumnOption,
-  IonActionSheet
-} from '@ionic/vue'
-import { arrowForward, manOutline, fitnessOutline, rocketOutline, chatboxEllipsesOutline } from 'ionicons/icons';
-import { arrowBack } from 'ionicons/icons';
-import { useAppData } from './composable'
-import { useRouter } from 'vue-router';
-const modalRef = ref(null)
-const { back } = useRouter();
-const step = ref(1);
-const selectedMode = ref(1);
-const checkedId = ref([1]);
+// import { computed, ref, watch, type Ref } from 'vue'
+// import { use,  } from "echarts/core";
+// import { CanvasRenderer } from "echarts/renderers";
+// import { RadarChart} from "echarts/charts";
+// import {
+//   TitleComponent,
+//   TooltipComponent,
+//   LegendComponent
+// } from "echarts/components";
+// import VChart, { THEME_KEY } from "vue-echarts";
+// import echarts from "vue-echarts"
+// import {
+//   IonModal,
+//   IonButtons,
+//   IonButton,
+//   IonPicker,
+//   IonIcon,
+//   IonText,
+//   IonPickerColumn,
+//   IonPickerColumnOption,
+//   IonActionSheet
+// } from '@ionic/vue'
+// import { arrowForward, manOutline, fitnessOutline, rocketOutline, chatboxEllipsesOutline } from 'ionicons/icons';
+// import { arrowBack } from 'ionicons/icons';
+// import { useAppData } from './composable'
+// import { useRouter } from 'vue-router';
+// const modalRef = ref(null)
+// const { back } = useRouter();
+// const step = ref(1);
+// const selectedMode = ref(1);
+// const checkedId = ref([1]);
 
-// 创建 collapse 的数组数据
-const collapseItems = ref([
-  {
-    icon: manOutline, id: 1, title: '运势分析', items: [
-      { label: '我近期的整体运势怎么样?', id: 2 },
-      { label: '未来一年内我会升职加薪吗?', id: 3 },
-      { label: '未来一年内我会跳槽吗?', id: 4 },
-      { label: '这次考试我会不会挂科?', id: 5 },
-      { label: '这次考试我会不会挂科?', id: 6 },
-      { label: '这次项目会不会成功?', id: 7 },
-    ]
-  },
-  {
-    icon: rocketOutline, id: 2, title: '前程分析', items: [
-      { label: '请问我近期的整体运势怎么样？', id: 1 },
-      { label: '未来一年内我会升职加薪吗?', id: 2 },
-      { label: '未来一年内我会跳槽吗?', id: 3 },
-      { label: '这次考试我会不会挂科?', id: 4 },
-      { label: '这次考试我会不会挂科?', id: 5 },
-      { label: '这次项目会不会成功?', id: 6 },
-    ]
-  },
-  { icon: fitnessOutline, id: 3, title: '健康分析' },
-  { icon: chatboxEllipsesOutline, id: 4, title: '自己提问', showArrow: true }
-]);
+// use([CanvasRenderer])
+
+// const option = ref({
+//   color: ['#67F9D8', '#FFE434', '#56A3F1', '#FF917C'],
+//   title: {
+//     text: 'Customized Radar Chart'
+//   },
+//   legend: {},
+//   radar: [
+//     {
+//       indicator: [
+//         { text: 'Indicator1' },
+//         { text: 'Indicator2' },
+//         { text: 'Indicator3' },
+//         { text: 'Indicator4' },
+//         { text: 'Indicator5' }
+//       ],
+//       center: ['25%', '50%'],
+//       radius: 120,
+//       startAngle: 90,
+//       splitNumber: 4,
+//       shape: 'circle',
+//       axisName: {
+//         formatter: '【{value}】',
+//         color: '#428BD4'
+//       },
+//       splitArea: {
+//         areaStyle: {
+//           color: ['#77EADF', '#26C3BE', '#64AFE9', '#428BD4'],
+//           shadowColor: 'rgba(0, 0, 0, 0.2)',
+//           shadowBlur: 10
+//         }
+//       },
+//       axisLine: {
+//         lineStyle: {
+//           color: 'rgba(211, 253, 250, 0.8)'
+//         }
+//       },
+//       splitLine: {
+//         lineStyle: {
+//           color: 'rgba(211, 253, 250, 0.8)'
+//         }
+//       }
+//     },
+//     {
+//       indicator: [
+//         { text: 'Indicator1', max: 150 },
+//         { text: 'Indicator2', max: 150 },
+//         { text: 'Indicator3', max: 150 },
+//         { text: 'Indicator4', max: 120 },
+//         { text: 'Indicator5', max: 108 },
+//         { text: 'Indicator6', max: 72 }
+//       ],
+//       center: ['75%', '50%'],
+//       radius: 120,
+//       axisName: {
+//         color: '#fff',
+//         backgroundColor: '#666',
+//         borderRadius: 3,
+//         padding: [3, 5]
+//       }
+//     }
+//   ],
+//   series: [
+//     {
+//       type: 'radar',
+//       emphasis: {
+//         lineStyle: {
+//           width: 4
+//         }
+//       },
+//       data: [
+//         {
+//           value: [100, 8, 0.4, -80, 2000],
+//           name: 'Data A'
+//         },
+//         {
+//           value: [60, 5, 0.3, -100, 1500],
+//           name: 'Data B',
+//           areaStyle: {
+//             color: 'rgba(255, 228, 52, 0.6)'
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       type: 'radar',
+//       radarIndex: 1,
+//       data: [
+//         {
+//           value: [120, 118, 130, 100, 99, 70],
+//           name: 'Data C',
+//           symbol: 'rect',
+//           symbolSize: 12,
+//           lineStyle: {
+//             type: 'dashed'
+//           },
+//           label: {
+//             show: true,
+//             formatter: function (params) {
+//               return params.value;
+//             }
+//           }
+//         },
+//         {
+//           value: [100, 93, 50, 90, 70, 60],
+//           name: 'Data D',
+//           areaStyle: {
+//             color:  new RadialGradientObject(0.1, 0.6, 1, [
+//               {
+//                 color: 'rgba(255, 145, 124, 0.1)',
+//                 offset: 0
+//               },
+//               {
+//                 color: 'rgba(255, 145, 124, 0.9)',
+//                 offset: 1
+//               }
+//             ])
+//           }
+//         }
+//       ]
+//     }
+//   ]
+// });
 </script>
 
 <style scss scoped>

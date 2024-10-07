@@ -40,4 +40,3 @@ app.use(router)
 app.use(IonicVue)
 
 app.mount('#app')
-tt.login({success:console.log, fail: console.error})

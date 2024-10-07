@@ -1,0 +1,44 @@
+name: Deploy to Aliyun OSS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+ 
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' # 根据你的项目需要修改 Node.js 版本
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the project
+      - name: Build the project
+        run: npm run build # 确保你的 package.json 中定义了 build 脚本
+
+      # Install OSS CLI
+      - name: Install Aliyun OSS CLI
+        run: |
+          npm install -g aliyun-cli
+
+      # Configure OSS credentials
+      - name: Configure OSS credentials
+        run: |
+          aliyun configure set --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} --endpoint oss-cn-beijing.aliyuncs.com --bucket aibazi
+
+      # Upload to OSS
+      - name: Upload to Aliyun OSS
+        run: |
+          aliyun oss cp -r dist/ oss://aibazi/

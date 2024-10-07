@@ -55,9 +55,9 @@
                   <label v-show="fortuneItem.year" class="italic text-sm"  
                   >{{ fortuneItem.year }}</label>
                   <label v-show="fortuneItem.month"  class="italic text-sm" 
-                  >{{ fortuneItem.month }}</label>
+                  >{{ fortuneItem.month }}月</label>
                   <label v-show="fortuneItem.day"  class="italic text-sm" 
-                  >{{ fortuneItem.day }}</label>
+                  >{{ fortuneItem.day }}日</label>
                   <label v-show="fortuneItem.age"  class="italic  text-xs "
                  
                     >{{ fortuneItem.age }}岁</label

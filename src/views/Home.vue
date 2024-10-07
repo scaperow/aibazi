@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 flex flex-col gap-16 justify-start w-full h-full ">
+  <div class="flex-1 flex flex-col  justify-start w-full h-full ">
     <div class="flex justify-center items-center mt-16 px-16">
       <img v-if="isDark" src="../assets/logo_dark.png" class="w-full h-auto" />
       <img v-else src="../assets/logo_light.png" class="w-full h-auto" />
@@ -7,8 +7,15 @@
         <ion-text>八字排盘</ion-text>
       </div> -->
     </div>
-
-    <div class="form">
+    <div class="flex flex-row w-full justify-center gap-2 items-center text-base-content/60 mt-4">
+      <span>八字排盘</span>
+      <label class="divider divider-horizontal my-2"></label>
+      <span>流年大运 </span>
+      <label class="divider divider-horizontal my-2"></label>
+      <span> 智能解析</span>
+    </div>
+  
+    <div class="form mt-36">
       <div class="item">
         <div class="label">出生时间</div>
         <div @click="openPicker" class="content" :class="[selectedDataString ? 'neutral-content' : '	base-content']">
@@ -26,11 +33,11 @@
           {{ selectedGenderString || '请点击选择' }}
         </div>
       </div>
-    </div>
-
-    <button class="btn btn-primary w-full mx-4 max-w-64 self-center" @click="
+    <button class="btn btn-primary w-full mx-4 max-w-64 self-center mt-2" @click="
 
       push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}`)">测算</button>
+    </div>
+
 
     <ion-modal ref="modalRef" mode="ios">
       <div class="flex flex-col">
