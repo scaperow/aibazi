@@ -35,8 +35,8 @@ jobs:
       # Configure OSS credentials
       - name: Configure OSS credentials
         run: |
-          aliyun configure set --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} --endpoint oss-cn-beijing.aliyuncs.com --bucket aibazi
+          aliyun configure set --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} --region cn-beijing
       # Upload to OSS
       - name: Upload to Aliyun OSS
         run: |
-          aliyun oss cp -r dist/ oss://aibazi/
+          aliyun oss cp dist/  oss://aibazi/ -e oss-cn-beijing.aliyuncs.com -r 
