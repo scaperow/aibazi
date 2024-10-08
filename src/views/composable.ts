@@ -104,7 +104,7 @@ const calendarMode = ref<'solar' | 'lunar'>('solar')
 const selectedYear = ref<number>()
 const selectedMonth = ref<number>()
 const selectedDay = ref<number>()
-const selectedHour = ref<number>()
+const selectedHour = ref<string>()
 const selectedGender: Ref<Gender | null> = ref(null)
 const lsrObject = computed(() => {
   if (
@@ -134,7 +134,7 @@ const lsrObject = computed(() => {
 export const useAppData = () => {
   const currentLuckYear: Ref<any> = ref(null)
   const currentFortune: Ref<any> = ref(null)
-  const updateBirthday = (year: number, month: number, day: number, hour: number) => {
+  const updateBirthday = (year: number, month: number, day: number, hour: string) => {
     selectedYear.value = year
     selectedMonth.value = month
     selectedDay.value = day

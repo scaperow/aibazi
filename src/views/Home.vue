@@ -14,7 +14,7 @@
       <label class="divider divider-horizontal my-2"></label>
       <span> 智能解析</span>
     </div>
-  
+
     <div class="form mt-36">
       <div class="item">
         <div class="label">出生时间</div>
@@ -25,7 +25,6 @@
           <div class="self-shrink flex-grow-1">{{ selectedDataString || '请点击选择' }}</div>
         </div>
       </div>
-
       <div class="item">
         <div class="label">性别</div>
         <div id="open-action-sheet" class="content"
@@ -33,9 +32,9 @@
           {{ selectedGenderString || '请点击选择' }}
         </div>
       </div>
-    <button class="btn btn-primary w-full mx-4 max-w-64 self-center mt-2" @click="
-
-      push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}/${calendarMode}`)">测算</button>
+      <button class="btn btn-primary w-full mx-4 max-w-64 self-center mt-2" :disabled="!selectedDataString"
+        @click="
+          push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}/${calendarMode}`)">测算</button>
     </div>
 
 
@@ -55,8 +54,9 @@
       </div>
 
       <ion-picker mode="ios">
-        <ion-picker-column mode="ios" @ionChange="($event) => onColumnChanged(index, $event.detail)"
-          v-for="(column, index) in columns" :Key="column.name">
+        <ion-picker-column :value="selectedColumn(column.name)!.value" mode="ios"
+          @ionChange="($event) => onColumnChanged(index, $event.detail)" v-for="(column, index) in columns"
+          :Key="column.name">
           <ion-picker-column-option v-for="option in column.options" :value="option.value" :key="option.value">{{
             option.text }}</ion-picker-column-option>
         </ion-picker-column>
@@ -70,8 +70,6 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch, type Ref } from 'vue'
-import Pillars from './Pillars.vue'
-import Fortune from './Fortune.vue'
 import {
   IonModal,
   IonButtons,
@@ -105,8 +103,12 @@ const selectedGenderString = computed(() =>
 )
 
 const confirm = () => {
-  updateBirthday(selectedYear.value as number, selectedMonth.value as number, selectedDay.value as number, selectedHour.value as number)
-    ; (modalRef.value! as typeof IonModal).$el.dismiss()
+  const modal = (modalRef.value! as typeof IonModal);
+  updateBirthday(selectedYear.value as number, selectedMonth.value as number, selectedDay.value as number, selectedHour.value )
+
+  if (modal) {
+    modal.$el.dismiss();
+  }
 }
 
 const onSelectGender = ({ data }: any) => {
@@ -124,10 +126,11 @@ const {
   lsrObject
 } = useAppData()
 // // 选中的年、月、日
-const selectedYear = ref<number>()
-const selectedMonth = ref<number>()
-const selectedDay = ref<number>()
-const selectedHour = ref<number>()
+const now = new Date()
+const selectedYear = ref<number>(now.getFullYear() - 20)
+const selectedMonth = ref<number>(now.getMonth() + 1)
+const selectedDay = ref<number>(now.getDate())
+const selectedHour = ref<string>('00')
 const actionSheetButtons = ref([
   {
     text: '男',
@@ -151,7 +154,7 @@ const onColumnChanged = (column: number, { value }: any) => {
       selectedDay.value = parseInt(value)
       break
     case 3:
-      selectedHour.value = parseInt(value)
+      selectedHour.value = value
       break
   }
 }
@@ -169,14 +172,25 @@ const generateDayOptions = (year: number, month: number) => {
     }))
   } else {
     // 农历生成天数
-    
+
     const daysInMonth = calculateDaysInMonth(year, lunisolar(`${year}-${month}-1`).lunar.month)
     return Array.from({ length: daysInMonth }, (_, i) => ({
-      text: `农历${i + 1}日`,
+      text: `${i + 1}日`,
       value: i + 1
     }))
   }
 }
+
+const selectedColumn = ((name: string) => {
+  if (name === 'year')
+    return selectedYear;
+  if (name === 'month')
+    return selectedMonth;
+  if (name === 'day')
+    return selectedDay
+  if (name === 'time')
+    return selectedHour
+})
 
 // // 定义日期选择器的列
 const columns = ref([
@@ -185,14 +199,14 @@ const columns = ref([
     options: Array.from({ length: 100 }, (_, i) => ({
       text: `${2024 - i}年`,
       value: 2024 - i
-    }))
+    })).reverse()
   },
   {
     name: 'month',
     options: Array.from({ length: 12 }, (_, i) => ({
       text: `${i + 1}月`,
       value: i + 1
-    }))
+    })).reverse()
   },
   {
     name: 'day',
@@ -201,30 +215,30 @@ const columns = ref([
   {
     name: 'time',
     options: [
-      { text: '00:00', value: '00:00' },
-      { text: '01:00', value: '01:00' },
-      { text: '02:00', value: '02:00' },
-      { text: '03:00', value: '03:00' },
-      { text: '04:00', value: '04:00' },
-      { text: '05:00', value: '04:00' },
-      { text: '06:00', value: '06:00' },
-      { text: '07:00', value: '07:00' },
-      { text: '08:00', value: '08:00' },
-      { text: '09:00', value: '08:00' },
-      { text: '10:00', value: '10:00' },
-      { text: '11:00', value: '11:00' },
-      { text: '12:00', value: '12:00' },
-      { text: '13:00', value: '13:00' },
-      { text: '14:00', value: '14:00' },
-      { text: '15:00', value: '15:00' },
-      { text: '16:00', value: '16:00' },
-      { text: '17:00', value: '17:00' },
-      { text: '18:00', value: '18:00' },
-      { text: '19:00', value: '19:00' },
-      { text: '20:00', value: '20:00' },
-      { text: '21:00', value: '21:00' },
-      { text: '22:00', value: '22:00' },
-      { text: '23:00', value: '23:00' }
+      { text: '00:00', value: '00' },
+      { text: '01:00', value: '01' },
+      { text: '02:00', value: '02' },
+      { text: '03:00', value: '03' },
+      { text: '04:00', value: '04' },
+      { text: '05:00', value: '04' },
+      { text: '06:00', value: '06' },
+      { text: '07:00', value: '07' },
+      { text: '08:00', value: '08' },
+      { text: '09:00', value: '08' },
+      { text: '10:00', value: '10' },
+      { text: '11:00', value: '11' },
+      { text: '12:00', value: '12' },
+      { text: '13:00', value: '13' },
+      { text: '14:00', value: '14' },
+      { text: '15:00', value: '15' },
+      { text: '16:00', value: '16' },
+      { text: '17:00', value: '17' },
+      { text: '18:00', value: '18' },
+      { text: '19:00', value: '19' },
+      { text: '20:00', value: '20' },
+      { text: '21:00', value: '21' },
+      { text: '22:00', value: '22' },
+      { text: '23:00', value: '23' }
     ]
   }
 ])

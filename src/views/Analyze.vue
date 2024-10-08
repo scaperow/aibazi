@@ -57,7 +57,7 @@ const {
 } = useAppData()
 
 if (!lsrObject.value) {
-  updateBirthday(parseInt(year + ''), parseInt(month + ''), parseInt(day + ''), parseInt(hour + ''))
+  updateBirthday(parseInt(year + ''), parseInt(month + ''), parseInt(day + ''), hour + '')
   updateGender(parseInt(gender + ''))
   updateCalendarMode(mode + '')
 }
