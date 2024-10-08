@@ -40,6 +40,18 @@ jobs:
       - name: Upload to Aliyun OSS
         run: |
           aliyun oss cp dist/  oss://aibazi/ -e oss-cn-beijing.aliyuncs.com -r -f
-      - name: Rerefsh CDN
+      
+      - name: Notify via Server酱 (Success)
+        if: success()  # 只有成功时才发送通知
         run: |
-          aliyun cdn RefreshObjectCaches --ObjectPath http://example.com/path/to/dir/ --ObjectType Directory
+          curl -X POST "https://sctapi.ftqq.com/${{ secrets.SERVERCHAN_SEND_KEY }}.send" \
+          -d "title=Aliyun OSS Deployment Success" \
+          -d "desp=The project(aibazi) has been successfully deployed to Aliyun OSS."
+
+      # Notify deployment failure via Server酱
+      - name: Notify via Server酱 (Failure)
+        if: failure()  # 部署失败时发送通知
+        run: |
+          curl -X POST "https://sctapi.ftqq.com/${{ secrets.SERVERCHAN_SEND_KEY }}.send" \
+          -d "title=Aliyun OSS Deployment Failure" \
+          -d "desp=The deployment to Aliyun OSS has failed. Please check the workflow logs for details."
