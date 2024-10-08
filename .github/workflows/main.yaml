@@ -39,4 +39,7 @@ jobs:
       # Upload to OSS
       - name: Upload to Aliyun OSS
         run: |
-          aliyun oss cp dist/  oss://aibazi/ -e oss-cn-beijing.aliyuncs.com -r 
+          aliyun oss cp dist/  oss://aibazi/ -e oss-cn-beijing.aliyuncs.com -r -f
+      - name: Rerefsh CDN
+        run: |
+          aliyun cdn RefreshObjectCaches --ObjectPath http://example.com/path/to/dir/ --ObjectType Directory
