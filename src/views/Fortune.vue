@@ -63,19 +63,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, reactive, type Ref, ref, watch, type Reactive } from 'vue'
+import { computed, reactive, type Ref, ref} from 'vue'
 import { useAppData } from './composable'
-import { map, set } from 'lodash'
+import { map } from 'lodash'
 
 const {
-  selectedYear,
   currentLuckMonth,
   currentLuckDay,
   fortunes,
   luckYears,
   setFortune,
   luckMonths,
-  currentFortune,
   currentLuckYear,
   luckDays,
   lucky

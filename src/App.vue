@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { IonApp, IonContent } from '@ionic/vue'
 </script>
 
 <template>

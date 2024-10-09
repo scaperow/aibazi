@@ -115,10 +115,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, watch, type Ref } from 'vue'
 import { useAppData } from './composable'
 const { eightChar } = useAppData()
-onMounted(() => { })
 </script>
 
 <style scss scoped>

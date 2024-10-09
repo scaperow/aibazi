@@ -1,11 +1,7 @@
 <template>
   <div class="flex-1 flex flex-col  justify-start w-full h-full ">
     <div class="flex justify-center items-center mt-16 px-16">
-      <img v-if="isDark" src="../assets/logo_dark.png" class="w-full h-auto" />
-      <img v-else src="../assets/logo_light.png" class="w-full h-auto" />
-      <!-- <div>
-        <ion-text>八字排盘</ion-text>
-      </div> -->
+      <img src="../assets/logo_hero.png" class="w-full h-auto dark:invert" />
     </div>
     <div class="flex flex-row w-full justify-center gap-2 items-center text-base-content/60 mt-4">
       <span>八字排盘</span>
@@ -36,8 +32,6 @@
         @click="
           push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}/${calendarMode}`)">测算</button>
     </div>
-
-
     <ion-modal ref="modalRef" mode="ios">
       <div class="flex flex-col">
         <div class="flex justify-between py-2 px-4">
@@ -82,10 +76,7 @@ import {
 } from '@ionic/vue'
 import { useAppData } from './composable'
 import { useRouter } from 'vue-router'
-import { useDark } from '@vueuse/core'
 import lunisolar from 'lunisolar'
-
-const isDark = useDark() // Ref<'dark' | 'light'>
 const modalRef = ref(null)
 const { push } = useRouter();
 

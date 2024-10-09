@@ -24,21 +24,9 @@ import { computed, ref, watch, type Ref } from 'vue'
 import Pillars from './Pillars.vue'
 import Fortune from './Fortune.vue'
 import AI from './AI.vue'
-import {
-  IonModal,
-  IonButtons,
-  IonButton,
-  IonPicker,
-  IonIcon,
-  IonText,
-  IonPickerColumn,
-  IonPickerColumnOption,
-  IonActionSheet
-} from '@ionic/vue'
 import { arrowBack } from 'ionicons/icons';
 import { useAppData } from './composable'
 import { useRoute, useRouter } from 'vue-router';
-const modalRef = ref(null)
 const { back } = useRouter();
 
 const { params } = useRoute()
