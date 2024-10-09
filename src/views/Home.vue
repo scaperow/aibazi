@@ -1,7 +1,7 @@
 <template>
   <div class="flex-1 flex flex-col  justify-start w-full h-full ">
     <div class="flex justify-center items-center mt-16 px-16">
-      <img src="../assets/logo_hero.png" class="w-full h-auto dark:invert" />
+      <img  src="../assets/logo_hero.png" class="h-60 w-auto dark:invert object-contain" />
     </div>
     <div class="flex flex-row w-full justify-center gap-2 items-center text-base-content/60 mt-4">
       <span>八字排盘</span>
@@ -62,6 +62,7 @@
 </template>
 
 <script lang="ts" setup>
+import logoHero from '@/assets/logo_hero.png'
 import { computed, ref, watch, type Ref } from 'vue'
 import {
   IonModal,
