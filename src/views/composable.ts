@@ -1,14 +1,9 @@
 import { compact, filter, first, get, map } from 'lodash'
 import {
-  ChildLimit,
   Gender,
   HeavenStem,
-  LunarDay,
   LunarHour,
-  LunarYear,
   SixtyCycle,
-  SolarTime,
-  Sound
 } from 'tyme4ts'
 //@ts-ignore
 import { Builder } from 'shiren-columns'
@@ -20,7 +15,7 @@ import lunisolar from 'lunisolar'
 // 引入 theGods 插件
 import { theGods } from '@lunisolar/plugin-thegods'
 
-import { char8ex, TenGod } from '@lunisolar/plugin-char8ex'
+import { char8ex } from '@lunisolar/plugin-char8ex'
 import { takeSound } from '@lunisolar/plugin-takesound'
 import zhCn from 'lunisolar/locale/zh-cn'
 import theGodsZh from 'lunisolar/plugins/theGods/locale/zh-cn'
@@ -295,7 +290,7 @@ export const useAppData = () => {
 
     const lsr = lsrObject.value
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
-    const { basic, lucky } = info
+    const { basic } = info
     const dg = basic.g[2]
     return Builder.year(currentFortune.value).map((item: any, index: number) => {
       const luckYear = Builder.gz(dg, item)
@@ -322,8 +317,7 @@ export const useAppData = () => {
     const lsr = lsrObject.value
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
     const {
-      basic,
-      lucky: { datetime, desc, g, z }
+      basic
     } = info
     const dg = basic.g[2]
     return Builder.month(currentLuckYear.value).map((item: any, index: number) => {
@@ -351,7 +345,7 @@ export const useAppData = () => {
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
     const {
       basic,
-      lucky: { datetime, desc, g, z }
+      lucky
     } = info
     const dg = basic.g[2]
     const luckMonth = luckMonths.value.find(
