@@ -28,9 +28,8 @@
           {{ selectedGenderString || '请点击选择' }}
         </div>
       </div>
-      <button class="btn btn-primary w-full mx-4 max-w-64 self-center mt-2" :disabled="!selectedDataString"
-        @click="
-          push(`/show/${selectedYear}/${selectedMonth}/${selectedDay}/${selectedHour}/${selectedGender}/${calendarMode}`)">测算</button>
+      <button class="btn btn-primary w-full mx-4 max-w-64 self-center mt-2" 
+        @click="submit">测算</button>
     </div>
     <ion-modal ref="modalRef" mode="ios">
       <div class="flex flex-col">
@@ -72,7 +71,8 @@ import {
   IonText,
   IonPickerColumn,
   IonPickerColumnOption,
-  IonActionSheet
+  IonActionSheet,
+  toastController
 } from '@ionic/vue'
 import { useAppData } from './composable'
 import { useRouter } from 'vue-router'
@@ -132,6 +132,31 @@ const actionSheetButtons = ref([
     data: 0
   }
 ])
+
+const submit = async () => {
+  let errorMessage = null;
+  if (!selectedDataString.value) {
+    errorMessage = '请选出生日期';
+  }
+
+  else if (selectedGender.value === null) {
+    errorMessage = '请选择性别';
+  }
+
+  if (errorMessage) {
+    const toast = await toastController.create({
+      mode: 'ios',
+      message: errorMessage,
+      duration: 2500,
+      position: 'top'
+    });
+
+    await toast.present();
+    return;
+  }
+
+  push(`/show/${selectedYear.value}/${selectedMonth.value}/${selectedDay.value}/${selectedHour.value}/${selectedGender.value}/${calendarMode.value}`)
+}
 
 const onColumnChanged = (column: number, { value }: any) => {
   switch (column) {
