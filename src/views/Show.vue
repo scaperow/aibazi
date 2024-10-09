@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, type Ref } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import Pillars from './Pillars.vue'
 import Fortune from './Fortune.vue'
 import AI from './AI.vue'
