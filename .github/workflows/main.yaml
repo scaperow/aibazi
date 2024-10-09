@@ -40,6 +40,10 @@ jobs:
       - name: Upload to Aliyun OSS
         run: |
           aliyun oss cp dist/  oss://aibazi/ -e oss-cn-beijing.aliyuncs.com -r -f
+
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
      
       - name: Refresh CDN
         run: |

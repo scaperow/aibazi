@@ -1,9 +1,9 @@
 <template>
   <div class="flex-1 flex flex-col  justify-start w-full h-full ">
     <div class="flex justify-center items-center mt-16 px-16">
-      <img  src="../assets/logo_hero.png" class="h-60 w-auto dark:invert object-contain" />
+      <img  src="../assets/logo_hero.png" class="h-60 w-auto dark:invert object-contain object-bottom" />
     </div>
-    <div class="flex flex-row w-full justify-center gap-2 items-center text-base-content/60 mt-4">
+    <div class="flex flex-row w-full justify-center gap-2 items-center text-base-content/60 mt-2">
       <span>八字排盘</span>
       <label class="divider divider-horizontal my-2"></label>
       <span>流年大运 </span>
