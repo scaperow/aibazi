@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/show/:year/:month/:day/:hour/:gender/:mode',
       name: 'show',
-      component: import('../views/Show.vue')
+      component:  () => import('../views/Show.vue')
     },
     {
       path: '/',

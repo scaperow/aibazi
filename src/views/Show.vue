@@ -26,6 +26,7 @@ import Fortune from './Fortune.vue'
 import AI from './AI.vue'
 import { arrowBack } from 'ionicons/icons';
 import { useAppData } from './composable'
+import { IonIcon } from '@ionic/vue';
 import { useRoute, useRouter } from 'vue-router';
 const { back } = useRouter();
 
