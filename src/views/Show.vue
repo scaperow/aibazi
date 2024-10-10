@@ -2,7 +2,7 @@
   <div class="flex-1 flex flex-col gap-4 justify-start w-full h-full">
     <div class="flex flex-row justify-between items-center pt-10  px-2" v-if="lsrObject">
       <button class="btn btn-sm btn-ghost " @click="back">
-        <IonIcon size="large" :icon="arrowBack"></IonIcon> {{ lsrObject.format('YYYY/MM/DD HH') }} / {{ selectedGender
+        <IonIcon size="large" :icon="arrowBack"></IonIcon> {{ lsrObject.format(calendarMode === 'lunar' ? 'lY年lMlDlH時' : 'YYYY/MM/DD HH点')   }} / {{ selectedGender
           === 1 ? '男' :
           "女"
         }}

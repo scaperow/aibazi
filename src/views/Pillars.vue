@@ -58,12 +58,12 @@
 
       <tr>
         <td>神煞</td>
-        <td v-for="(cellValue, cellIndex) in eightChar.gods">
+        <td v-for="(cellValue, cellIndex) in eightChar.gods" :key="cellIndex">
           <!-- {{ cellValue }} -->
           <div class="flex gap-1 flex-wrap flex-col justify-start items-center">
             <div
               class="flex rounded-md flex-row items-center border-solid border border-base-200 flex-nowrap gap-1 px-1"
-              v-for="itemValue in cellValue">
+              v-for="(itemValue, itemIndex) in cellValue" :key="itemIndex">
               <div class="text-success text-md mt-auto mb-auto" v-if="itemValue.luckLevel === 1">
                 吉
               </div>
@@ -78,8 +78,15 @@
       </tr>
 
       <tr>
+        <td>空亡</td>
+        <td v-for="(cellValue, cellIndex) in eightChar.missing" :key="cellIndex">
+          {{ cellValue }}
+        </td>
+      </tr>
+
+      <tr>
         <td>纳音</td>
-        <td v-for="(cellValue, cellIndex) in eightChar.sound">
+        <td v-for="(cellValue, cellIndex) in eightChar.sound" :key="cellIndex">
           {{ cellValue }}
         </td>
       </tr>

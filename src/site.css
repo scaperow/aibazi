@@ -19,7 +19,7 @@
 
 /* 设置根字体大小为 1rem = 10px (默认值)，并根据屏幕宽度动态调整 */
 html {
-  font-size: calc(12px + 1vw); /* 1vw = 1% of viewport wi`dth */
+  font-size: calc(14px + 1vw); /* 1vw = 1% of viewport wi`dth */
 }
 
 /* 在桌面端，保持更大的字体 */

@@ -48,18 +48,37 @@ jobs:
       - name: Refresh CDN
         run: |
           aliyun cdn RefreshObjectCaches --ObjectPath https://aibazi.scaperow.com/index.html
-      
-      # - name: Notify via Server酱 (Success)
-      #   if: success()  # 只有成功时才发送通知
-      #   run: |
-      #     curl -X POST "https://sctapi.ftqq.com/${{ secrets.SERVERCHAN_SEND_KEY }}.send" \
-      #     -d "title=Aliyun OSS Deployment Success" \
-      #     -d "desp=The project(aibazi) has been successfully deployed to Aliyun OSS."
+    
+  notify:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
 
-      # # Notify deployment failure via Server酱
-      # - name: Notify via Server酱 (Failure)
-      #   if: failure()  # 部署失败时发送通知
-      #   run: |
-      #     curl -X POST "https://sctapi.ftqq.com/${{ secrets.SERVERCHAN_SEND_KEY }}.send" \
-      #     -d "title=Aliyun OSS Deployment Failure" \
-      #     -d "desp=The deployment to Aliyun OSS has failed. Please check the workflow logs for details."
+    # Shared environment variables for Mailgun
+    env:
+      MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}  # Mailgun API Key from Secrets
+      MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}    # Mailgun domain from Secrets
+      TO_EMAIL: scaperow@hotmail.com                   # Target email
+      FROM_EMAIL: me@scaperow.com  # Verified sender email
+
+    steps:
+      # Notify success
+      - name: Send success email notification via Mailgun
+        if: success()  # This step will run only if the previous job is successful
+        run: |
+          curl -s --user "api:${MAILGUN_API_KEY}" \
+          https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages \
+          -F from="${FROM_EMAIL}" \
+          -F to="${TO_EMAIL}" \
+          -F subject="Aibazi Deployment Succeeded" \
+          -F text="The deployment to Aliyun OSS was completed successfully."
+
+      # Notify failure
+      - name: Send failure email notification via Mailgun
+        if: failure()  # This step will run only if the previous job fails
+        run: |
+          curl -s --user "api:${MAILGUN_API_KEY}" \
+          https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages \
+          -F from="${FROM_EMAIL}" \
+          -F to="${TO_EMAIL}" \
+          -F subject="Aibazi Deployment Failed" \
+          -F text="The deployment to Aliyun OSS has failed. Please check the logs for details."

@@ -62,7 +62,6 @@
 </template>
 
 <script lang="ts" setup>
-import logoHero from '@/assets/logo_hero.png'
 import { computed, ref, watch, type Ref } from 'vue'
 import {
   IonModal,
@@ -96,7 +95,7 @@ const selectedGenderString = computed(() =>
 
 const confirm = () => {
   const modal = (modalRef.value! as typeof IonModal);
-  updateBirthday(selectedYear.value as number, selectedMonth.value as number, selectedDay.value as number, selectedHour.value )
+  updateBirthday(year.value as number, month.value as number, day.value as number, hour.value )
 
   if (modal) {
     modal.$el.dismiss();
@@ -115,14 +114,18 @@ const {
   updateCalendarMode,
   calendarMode,
   selectedGender,
-  lsrObject
+  lsrObject,
+  selectedYear,
+  selectedHour,
+  selectedDay,
+  selectedMonth
 } = useAppData()
 // // 选中的年、月、日
 const now = new Date()
-const selectedYear = ref<number>(now.getFullYear() - 20)
-const selectedMonth = ref<number>(now.getMonth() + 1)
-const selectedDay = ref<number>(now.getDate())
-const selectedHour = ref<string>('00')
+const year = ref<number>(selectedYear.value || now.getFullYear() - 20)
+const month = ref<number>(selectedMonth.value || now.getMonth() + 1)
+const day = ref<number>(selectedDay.value || now.getDate())
+const hour = ref<string>(selectedHour.value || '00')
 const actionSheetButtons = ref([
   {
     text: '男',
@@ -156,22 +159,22 @@ const submit = async () => {
     return;
   }
 
-  push(`/show/${selectedYear.value}/${selectedMonth.value}/${selectedDay.value}/${selectedHour.value}/${selectedGender.value}/${calendarMode.value}`)
+  push(`/show/${year.value}/${month.value}/${day.value}/${hour.value}/${selectedGender.value}/${calendarMode.value}`)
 }
 
 const onColumnChanged = (column: number, { value }: any) => {
   switch (column) {
     case 0:
-      selectedYear.value = parseInt(value)
+      year.value = parseInt(value)
       break
     case 1:
-      selectedMonth.value = parseInt(value)
+      month.value = parseInt(value)
       break
     case 2:
-      selectedDay.value = parseInt(value)
+      day.value = parseInt(value)
       break
     case 3:
-      selectedHour.value = value
+      hour.value = value
       break
   }
 }
@@ -189,7 +192,6 @@ const generateDayOptions = (year: number, month: number) => {
     }))
   } else {
     // 农历生成天数
-
     const daysInMonth = calculateDaysInMonth(year, lunisolar(`${year}-${month}-1`).lunar.month)
     return Array.from({ length: daysInMonth }, (_, i) => ({
       text: `${i + 1}日`,
@@ -200,13 +202,13 @@ const generateDayOptions = (year: number, month: number) => {
 
 const selectedColumn = ((name: string) => {
   if (name === 'year')
-    return selectedYear;
+    return year;
   if (name === 'month')
-    return selectedMonth;
+    return month;
   if (name === 'day')
-    return selectedDay
+    return day
   if (name === 'time')
-    return selectedHour
+    return hour
 })
 
 // // 定义日期选择器的列
@@ -227,7 +229,7 @@ const columns = ref([
   },
   {
     name: 'day',
-    options: generateDayOptions(selectedYear.value as number, selectedMonth.value as number)
+    options: generateDayOptions(year.value as number, month.value as number)
   },
   {
     name: 'time',
@@ -261,7 +263,7 @@ const columns = ref([
 ])
 
 // 监听年份和月份的变化，更新天数
-watch([selectedYear, selectedMonth, calendarMode], ([newYear, newMonth]) => {
+watch([year, month, calendarMode], ([newYear, newMonth]) => {
   columns.value[2].options = generateDayOptions(newYear as number, newMonth as number) // 更新天数选项
 })
 

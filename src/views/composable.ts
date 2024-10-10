@@ -1,10 +1,4 @@
-import { compact, filter, first, get, map } from 'lodash'
-import {
-  Gender,
-  HeavenStem,
-  LunarHour,
-  SixtyCycle,
-} from 'tyme4ts'
+import { filter, first, get, map, zip } from 'lodash'
 //@ts-ignore
 import { Builder } from 'shiren-columns'
 //@ts-ignore
@@ -65,34 +59,79 @@ const TENSTARS: any = {
   杀: '七杀'
 }
 
-const getHeavenSteamNames = (sixtyCycle: SixtyCycle, daySixtyCycle: SixtyCycle) => {
-  const earchBranch = sixtyCycle.getEarthBranch()
-  const hideHeavenStemMiddle = earchBranch.getHideHeavenStemMiddle()
-  const hideHeavenStemResidual = earchBranch.getHideHeavenStemResidual()
-
-  return compact([
-    {
-      name: earchBranch.getHideHeavenStemMain().getName(),
-      tenStar: daySixtyCycle.getHeavenStem().getTenStar(earchBranch.getHideHeavenStemMain())
-    },
-    hideHeavenStemMiddle
-      ? {
-          name: hideHeavenStemMiddle.getName(),
-          tenStar: daySixtyCycle
-            .getHeavenStem()
-            .getTenStar(HeavenStem.fromName(hideHeavenStemMiddle.getName()))
-        }
-      : null,
-    hideHeavenStemResidual
-      ? {
-          name: hideHeavenStemResidual.getName(),
-          tenStar: daySixtyCycle
-            .getHeavenStem()
-            .getTenStar(HeavenStem.fromName(hideHeavenStemResidual.getName()))
-        }
-      : null
-  ])
+const char8exTrans = {
+  sex: ['坤造', '乾造'],
+  tenGod: {
+    正官: '正官',
+    七殺: '七杀',
+    正財: '正财',
+    偏財: '偏财',
+    食神: '食神',
+    傷官: '伤官',
+    比肩: '比肩',
+    劫財: '劫财',
+    正印: '正印',
+    梟神: '枭神',
+    日主: '日主'
+  },
+  gods: {
+    天乙貴人: '天乙贵人',
+    文昌貴人: '文昌贵人',
+    國印貴人: '国印贵人',
+    太極貴人: '太极贵人',
+    金輿: '金舆',
+    綠神: '禄神',
+    羊刃: '羊刃',
+    天官: '天官',
+    天福: '天福',
+    辭館: '词馆',
+    墓煞: '墓煞',
+    時墓: '时墓',
+    天廚貴人: '天厨贵人',
+    天德: '天德',
+    天德合: '天德合',
+    太白星: '太白星',
+    隔角: '隔角',
+    喪門: '丧门',
+    吊客: '吊客',
+    勾煞: '勾煞',
+    絞煞: '绞煞',
+    元辰: '元辰',
+    孤辰: '孤辰',
+    寡宿: '寡宿',
+    天羅: '天罗',
+    地網: '地网',
+    月德: '月德',
+    月德合: '月德合',
+    德: '德',
+    秀: '秀',
+    華蓋: '华盖',
+    將星: '将星',
+    驛馬: '驿马',
+    桃花: '桃花',
+    劫煞: '劫煞',
+    亡神: '亡神',
+    災煞: '灾煞',
+    六厄: '六厄',
+    日貴: '日贵',
+    魁罡貴人: '魁罡贵人',
+    日德: '日德',
+    陰陽差錯: '阴阳差错',
+    陰陽煞: '阴阳煞',
+    九醜: '九丑',
+    天赦: '天赦',
+    四廢: '四废',
+    天地轉煞: '天地转煞',
+    金神: '金神',
+    孤鸞: '孤鸾',
+    八專: '八专',
+    十惡大敗: '十恶大败',
+    學堂: '学堂',
+    帝座: '帝座',
+    截路空亡: '截路空亡'
+  }
 }
+
 const currentLuckMonth = ref(0)
 const currentLuckDay = ref(0)
 const calendarMode = ref<'solar' | 'lunar'>('solar')
@@ -100,7 +139,7 @@ const selectedYear = ref<number>()
 const selectedMonth = ref<number>()
 const selectedDay = ref<number>()
 const selectedHour = ref<string>()
-const selectedGender: Ref<Gender | null> = ref(null)
+const selectedGender: Ref<number | null> = ref(null)
 const lsrObject = computed(() => {
   if (
     !calendarMode.value ||
@@ -136,36 +175,34 @@ export const useAppData = () => {
     selectedHour.value = hour
   }
 
-  const updateGender = (gender: Gender | null) => {
+  const updateGender = (gender: number | null) => {
     selectedGender.value = gender
   }
 
   const updateCalendarMode = (value: string) => {
     calendarMode.value = value as 'solar' | 'lunar'
   }
-
+  
   const eightChar = computed(() => {
-    if (!lsrObject.value) {
+    if (!lsrObject.value || selectedGender.value === null) {
       return null
     }
-
-    const lunarHourObject = LunarHour.fromYmdHms(
-      lsrObject.value.year,
-      lsrObject.value.month,
-      lsrObject.value.day,
-      lsrObject.value.hour,
-      0,
-      0
-    )
     const lsr = lsrObject.value
-    const daySixtyCycle = lunarHourObject.getDaySixtyCycle()
-    const sixtyCycles = [
-      lunarHourObject.getYearSixtyCycle(),
-      lunarHourObject.getMonthSixtyCycle(),
-      daySixtyCycle,
-      lunarHourObject.getSixtyCycle()
-    ]
-    const c8 = lsr.char8ex(1)
+    const c8 = lsr.char8ex(selectedGender.value as 0 | 1)
+
+    const hiddenStems =
+      [
+        c8.year.branch.hiddenStems,
+        c8.month.branch.hiddenStems,
+        c8.day.branch.hiddenStems,
+        c8.hour.branch.hiddenStems
+      ].map((branchStems) => branchStems.map((branchStem) => branchStem.name))
+
+    const branchStems =
+      [c8.year.branchTenGod, c8.month.branchTenGod, c8.day.branchTenGod, c8.hour.branchTenGod].map(
+        (branchStems) => branchStems.map((branchStem) => get(char8exTrans.tenGod, branchStem.name))
+      )
+    
     return {
       tenStar: [
         c8.year.stemTenGod.name,
@@ -184,23 +221,12 @@ export const useAppData = () => {
           color: BG_ELEMENT_COLORS[branch.e5.name]
         })
       ),
-      /**c8 不支持藏干中取十神,因此使用 tyme4ts 库来实现 */
-      hideHeavenStems: sixtyCycles.map((sixtyCycle: SixtyCycle, index: number) =>
-        getHeavenSteamNames(sixtyCycle, daySixtyCycle)
-      ),
+      // /**c8 不支持  中取十神,  tyme4ts 库来实现 */
+      hideHeavenStems: zip(hiddenStems, branchStems).map(pair => 
+        zip(pair[0], pair[1]).map(([name, tenStar]) => ({ name, tenStar }))
+    ),
       sound: [c8.year.takeSound, c8.month.takeSound, c8.day.takeSound, c8.hour.takeSound],
-      // hideHeavenStems: [
-      //   c8.year.branch.hiddenStems,
-      //   c8.month.branch.hiddenStems,
-      //   c8.day.branch.hiddenStems,
-      //   c8.hour.branch.hiddenStems
-      // ],
-      // sixtyCycles.map((sixtyCycle: SixtyCycle, index: number) =>
-      //   sixtyCycle
-      //     .getExtraEarthBranches()
-      //     .map((earchBranch) => earchBranch.getName())
-      //     .join('')
-      // ),
+      missing: [c8.year.missing, c8.month.missing, c8.day.missing, c8.hour.missing].map((missings)=> missings.join('-')),
       gods: [c8.year.gods, c8.month.gods, c8.day.gods, c8.hour.gods].map((gods) =>
         gods.map((god) => {
           return {
@@ -316,9 +342,7 @@ export const useAppData = () => {
 
     const lsr = lsrObject.value
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
-    const {
-      basic
-    } = info
+    const { basic } = info
     const dg = basic.g[2]
     return Builder.month(currentLuckYear.value).map((item: any, index: number) => {
       const { g: stem, z: branch } = Builder.gz(dg, item)
@@ -343,10 +367,7 @@ export const useAppData = () => {
 
     const lsr = lsrObject.value
     const info = plate(true, lsr.year, lsr.month, lsr.day, lsr.hour)
-    const {
-      basic,
-      lucky
-    } = info
+    const { basic, lucky } = info
     const dg = basic.g[2]
     const luckMonth = luckMonths.value.find(
       (luckMonth: any) => luckMonth.month === currentLuckMonth.value
@@ -381,6 +402,9 @@ export const useAppData = () => {
     lucky,
     fortunes,
     selectedYear,
+    selectedMonth,
+    selectedDay,
+    selectedHour,
     calendarMode,
     selectedGender,
     setFortune,
