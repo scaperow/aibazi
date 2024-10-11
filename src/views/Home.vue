@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 flex flex-col  justify-start w-full h-full ">
-    <div class="flex justify-center items-center mt-16 px-16">
+    <div class="flex justify-center items-center px-16">
       <img  src="../assets/logo_hero.png" class="h-60 w-auto dark:invert object-contain object-bottom" />
     </div>
     <div class="flex flex-row w-full justify-center gap-2 items-center text-base-content/60 mt-2">

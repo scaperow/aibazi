@@ -1,8 +1,8 @@
 <template>
-  <table class="table table-fixed ">
+  <table class="table table-fixed  mt-8 ">
     <thead>
       <tr>
-        <th class="w-12"></th>
+        <th ></th>
         <th>年柱</th>
         <th>月柱</th>
         <th>日柱</th>
@@ -17,7 +17,6 @@
           <div class="">{{ cellValue }}</div>
         </td>
       </tr>
-
       <tr v-if="eightChar.heavenStem">
         <td>天干</td>
         <td v-for="(cellValue, cellIndex) in eightChar.heavenStem" :key="cellIndex">
@@ -37,7 +36,7 @@
       <tr v-if="eightChar.hideHeavenStems">
         <td>藏干</td>
         <td v-for="(cellValue, cellIndex) in eightChar.hideHeavenStems" :key="cellIndex">
-          <div class="flex gap-1 flex-wrap flex-col justify-start items-center">
+          <div class="flex gap-1 flex-wrap flex-col justify-start items-start">
             <div v-for="(itemValue, cellIndex) in cellValue" :key="cellIndex"
               class="flex flex-row items-center justify-center rounded-md border-solid border-base-200 border pr-1">
               <div class="text-base-content bg-base-200 text-md self-stretch px-1 flex items-center">
@@ -60,7 +59,7 @@
         <td>神煞</td>
         <td v-for="(cellValue, cellIndex) in eightChar.gods" :key="cellIndex">
           <!-- {{ cellValue }} -->
-          <div class="flex gap-1 flex-wrap flex-col justify-start items-center">
+          <div class="flex gap-1 flex-wrap flex-col justify-start items-start">
             <div
               class="flex rounded-md flex-row items-center border-solid border border-base-200 flex-nowrap gap-1 px-1"
               v-for="(itemValue, itemIndex) in cellValue" :key="itemIndex">
@@ -147,36 +146,52 @@ table {
     @apply px-4 py-1 rounded;
   }
 
+
   td,
   th {
-    @apply align-text-top text-center p-1 py-2;
+    @apply align-text-top text-left p-1 py-2 
+
   }
 
   td {
     &:first-child {
-      @apply text-sm text-base-content font-normal;
+      @apply text-sm text-base-content font-semibold text-center ;
     }
   }
 
   th {
-    @apply text-sm text-base-content font-normal;
+    @apply text-sm text-base-content font-semibold;
   }
 
-}
-
-.form {
-  @apply flex flex-col gap-4 px-10;
-
-  .item {
-    @apply join w-full outline outline-1 outline-slate-100 bg-base-200 hover:bg-base-100 h-12;
-
-    .label {
-      @apply join-item w-32 font-bold flex flex-row justify-center items-center text-sm bg-base-300 rounded;
-    }
-
-    .content {
-      @apply flex flex-1 flex-row justify-start items-center join-item px-6 text-right align-middle cursor-pointer;
-    }
-  }
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

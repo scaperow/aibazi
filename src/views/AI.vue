@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1  flex-col gap-4  w-full h-full  flex justify-center items-center">
-      <div class="text-2xl text-base-content bg-neutral p-2 rounded-md">📢 重磅功能，后续更新</div>
+      <div class="text-2xl text-base-content  p-2 rounded-md">📢 重磅功能，后续更新</div>
       <button class="btn btn-primary" @click="subscribed = true">点击订阅</button>
       <label class="text text-sm text-base-content/60" v-show="subscribed">您已成功订阅，该功能上线后会通知您</label>
     <!-- <v-chart class="chart" :option="option" /> -->
