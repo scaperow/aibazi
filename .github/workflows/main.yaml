@@ -47,6 +47,7 @@ jobs:
      
       - name: Refresh CDN
         run: |
+          aliyun cdn RefreshObjectCaches --ObjectPath https://aibazi.scaperow.com/
           aliyun cdn RefreshObjectCaches --ObjectPath https://aibazi.scaperow.com/index.html
     
   notify:
