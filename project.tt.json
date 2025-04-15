@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "aibazi-mini",
+  "description": "",
+  "appid": "tt8d9bfb2612af40aa01",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": true,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}

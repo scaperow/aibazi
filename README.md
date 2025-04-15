@@ -1,39 +1,58 @@
-# aibazi
+# AIBazi
 
-This template should help get you started developing with Vue 3 in Vite.
+根据用户姓别、生日、性别、等信息，为用户提供相关的八字信息。预留了 AI 调用能力，可以扩展出其他强大的功能（例如：解析，测命）
 
-## Recommended IDE Setup
+借助 Taro 框架，支持多端，包括：  
+* 抖音小程序
+* h5
+* 微信小程序
+...
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+# Stack
 
-## Type Support for `.vue` Imports in TS
+- Vue
+- Taro
+- TypeScript
+- TailwindCSS
+- Pinia
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Environment Configuration
 
-## Customize configuration
+The application requires the following environment variables to be configured:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- `TARO_APP_TT_CLOUD_ENV_ID`: Cloud environment identifier
+- `TARO_APP_TT_CLOUD_SERVICE_ID`: Cloud service identifier
+- `TARO_APP_API_URL`: Backend API endpoint
+- `TARO_APP_TT_BOAT_NAME`: Chat bot name identifier
+- `TARO_APP_TT_BOAT_URL`: Chat bot API endpoint
 
-## Project Setup
+## Getting Started
 
-```sh
-npm install
+1. Clone the repository
+2. Copy `.env.example` to `.env` and configure the environment variables
+3. Install dependencies:
+
+```bash
+yarn
 ```
 
-### Compile and Hot-Reload for Development
+4. Run the application:
+   for platform h5:
 
-```sh
-npm run dev
+```bash
+yarn dev:h5
 ```
 
-### Type-Check, Compile and Minify for Production
+for platform weapp:
 
-```sh
-npm run build
+```bash
+yarn dev:weapp
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+for platform tiktok:
 
-```sh
-npm run lint
+```bash
+yarn dev:tt
 ```
+
+> check the `package.json` for other platforms

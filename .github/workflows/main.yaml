@@ -1,0 +1,85 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+ 
+      # Set up Node.js
+      - name: Set up Node.js 
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' # 根据你的项目需要修改 Node.js 版本
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the project
+      - name: Build the project
+        run: npm run build # 确保你的 package.json 中定义了 build 脚本
+
+      # Install OSS CLI
+      - name: Install Aliyun OSS CLI
+        run: |
+          npm install -g aliyun-cli
+      # Configure OSS credentials
+      - name: Configure OSS credentials
+        run: |
+          aliyun configure set --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} --region cn-beijing
+      # Upload to OSS
+      - name: Upload to Aliyun OSS
+        run: |
+          aliyun oss cp dist/  oss://aibazi/ -e oss-cn-beijing.aliyuncs.com -r -f
+
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+     
+      - name: Refresh CDN
+        run: |
+          aliyun cdn RefreshObjectCaches --ObjectPath https://aibazi.scaperow.com/
+          aliyun cdn RefreshObjectCaches --ObjectPath https://aibazi.scaperow.com/index.html
+    
+  notify:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+
+    # Shared environment variables for Mailgun
+    env:
+      MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}  # Mailgun API Key from Secrets
+      MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}    # Mailgun domain from Secrets
+      TO_EMAIL: scaperow@hotmail.com                   # Target email
+      FROM_EMAIL: me@scaperow.com  # Verified sender email
+
+    steps:
+      # Notify success
+      - name: Send success email notification via Mailgun
+        if: success()  # This step will run only if the previous job is successful
+        run: |
+          curl -s --user "api:${MAILGUN_API_KEY}" \
+          https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages \
+          -F from="${FROM_EMAIL}" \
+          -F to="${TO_EMAIL}" \
+          -F subject="Aibazi Deployment Succeeded" \
+          -F text="The deployment to Aliyun OSS was completed successfully."
+
+      # Notify failure
+      - name: Send failure email notification via Mailgun
+        if: failure()  # This step will run only if the previous job fails
+        run: |
+          curl -s --user "api:${MAILGUN_API_KEY}" \
+          https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages \
+          -F from="${FROM_EMAIL}" \
+          -F to="${TO_EMAIL}" \
+          -F subject="Aibazi Deployment Failed" \
+          -F text="The deployment to Aliyun OSS has failed. Please check the logs for details."
