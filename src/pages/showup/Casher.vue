@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, watchEffect, watch } from 'vue';
-import { useOrder } from '../composable';
+import { useOrder } from '../../composables';
 import { Loading, Checked, MaskClose } from '@nutui/icons-vue-taro'
 
 const { pay, payStatus, showCaisher } = useOrder();

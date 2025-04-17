@@ -38,7 +38,8 @@
 
 </template>
 <script setup lang="ts">
-import { Order, useOrder } from '../composable';
+import { useOrder } from '../../composables';
+import { Order } from '../../types';
 import lunisolar from '../../lib/lunisolar'
 import { get } from 'lodash';
 import { reactive } from 'vue';

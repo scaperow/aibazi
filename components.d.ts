@@ -13,7 +13,6 @@ declare module 'vue' {
     NutOverlay: typeof import('@nutui/nutui-taro')['Overlay']
     NutPopup: typeof import('@nutui/nutui-taro')['Popup']
     NutRow: typeof import('@nutui/nutui-taro')['Row']
-    NutSticky: typeof import('@nutui/nutui-taro')['Sticky']
     NutToast: typeof import('@nutui/nutui-taro')['Toast']
   }
 }

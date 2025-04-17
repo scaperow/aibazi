@@ -74,15 +74,13 @@
         <text class="text-sm">{{ cellValue }}</text>
       </nut-col>
     </nut-row>
-    <button v-if="!isPreviewing" class="mt-10 btn btn-link w-full text-center "
-      @click="() => emit('changeTab', 'jiexi')">看不懂？跳转到详细解析页面</button>
+
   </view>
 </template>
 
 <script lang="ts" setup>
-import { useAppData } from '../composable'
+import { useAppData } from '../../composables'
 const { eightChar } = useAppData()
-const { isPreviewing } = useAppData()
 const emit = defineEmits(['changeTab'])
 </script>
 

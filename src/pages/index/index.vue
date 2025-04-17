@@ -1,11 +1,10 @@
 <template>
   <div class="flex-1 flex flex-col justify-center w-screen h-screen bg-base-200">
     <div class="flex flex-col gap-4">
-      <div class="flex justify-center items-center px-8">
-        <image :src="hero" mode="widthFix" class="object-contain" />
+      <div class="flex justify-center items-center px-8 mt-8 ">
+        <image :src="hero" mode="widthFix" class="object-contain w-full h-auto dark:invert" />
       </div>
-      <div class="flex flex-1 text-xs flex-row w-full justify-center items-center text-base-content/60"
-        v-if="!isPreviewing">
+      <div class="flex flex-1 text-xs flex-row w-full justify-center items-center text-base-content/60">
         <span>八字排盘</span>
         <span class="divider divider-horizontal my-2"></span>
         <span>流年大运</span>
@@ -15,8 +14,7 @@
     </div>
     <div class="form">
       <div class="item" @click="show = true">
-        <div class="label" v-if="isPreviewing">查询日期</div>
-        <div class="label" v-else>生日</div>
+        <div class="label">生日</div>
         <div class="content">
           <div class="badge text-sm" v-show="selectedDataString">
             {{ calendarMode === 'lunar' ? '农历' : '公历' }}
@@ -25,7 +23,7 @@
             selectedDataString || '请点击选择' }}</div>
         </div>
       </div>
-      <div class="item" v-if="!isPreviewing">
+      <div class="item">
         <div class="label ">性别</div>
         <div class="content">
           <div class="flex flex-row">
@@ -36,18 +34,12 @@
               :class="{ 'bg-primary text-primary-content': selectedGender === 2 }">女
             </div>
           </div>
-          <!-- <nut-radio-group direction="horizontal" v-model="gender" @change="updateGender">
-            <nut-radio label="1">男</nut-radio>
-            <nut-radio label="2">女</nut-radio>
-          </nut-radio-group> -->
         </div>
       </div>
     </div>
 
     <div class="flex flex-col gap-2 justify-center items-center  mx-4 mt-8">
-      <button class="btn btn-primary w-full mx-4 max-w-64 self-center " @tap="submit(isPreviewing)"
-        v-if="isPreviewing">查看信息</button>
-      <button class="btn btn-primary w-full mx-4 max-w-64 self-center " @tap="submit(isPreviewing)" v-else>测算</button>
+      <button class="btn btn-primary w-full mx-4 max-w-64 self-center " @tap="submit()">测算</button>
       <div class="btn btn-ghost w-full max-w-64 self-center text-base-content/60" style="border:0" @tap="showMe">我的信息
       </div>
     </div>
@@ -74,7 +66,8 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, type Ref } from 'vue'
 import hero from './logo_hero.png'
-import { CalendarMode, useAppData } from '../composable'
+import { useAppData } from '../../composables'
+import { CalendarMode } from '../../types'
 import Taro from '@tarojs/taro'
 
 const formatter = (type, option) => {
@@ -109,7 +102,6 @@ const confirm = () => {
   show.value = false
 }
 
-
 const {
   updateBirthday,
   updateGender,
@@ -119,10 +111,8 @@ const {
   selectedYear,
   selectedHour,
   selectedDay,
-  selectedMonth,
-  isPreviewing
+  selectedMonth
 } = useAppData()
-// // 选中的年、月、日
 const now = new Date()
 const year = selectedYear.value || now.getFullYear() - 20
 const month = selectedMonth.value || now.getMonth() + 1
@@ -146,11 +136,7 @@ const openToast = (msg, cover = false) => {
   toastState.cover = cover
 }
 
-const submit = (isPreviewing: boolean) => {
-  if (isPreviewing) {
-    selectedGender.value = 1
-  }
-
+const submit = () => {
   if (!selectedDataString.value) {
     openToast('请选择生日')
     return;
@@ -160,11 +146,6 @@ const submit = (isPreviewing: boolean) => {
     openToast('请选择性别')
     return;
   }
-
-  // Taro.getUserProfile({
-  //   desc: '', success: (result: any) => {
-  //     console.log(result);
-  // }, fail:console.log})
 
   Taro.navigateTo({
     url: '/pages/showup/index'

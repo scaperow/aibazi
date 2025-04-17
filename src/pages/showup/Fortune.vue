@@ -70,7 +70,7 @@
 </template>
 <script setup lang="ts">
 import { computed, type Ref, ref } from 'vue'
-import { useAppData } from '../composable'
+import { useAppData } from '../../composables'
 import { map } from 'lodash'
 
 const {
